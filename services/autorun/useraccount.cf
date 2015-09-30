@@ -1,0 +1,28 @@
+bundle agent hello_world_autorun
+{
+  meta:
+      "tags" slist => { "autorun" };
+
+  vars:
+      "users" slist => { "martin" };
+
+  users:
+      "$(users)"
+        policy => "present",
+        uid => "2001",
+        description => "Martin Gehrke",
+        home_dir => "/home/$(users)",
+        group_primary => "2001",
+        shell => "/bin/bash",
+        home_bundle => create_homedir("/home/$(users)", "$(users)"),
+        ifvarclass => "$(users)_group_exists";
+}
+
+bundle agent create_homedir(home, user)
+{
+  files:
+    "$(home)/."
+      create => "true",
+      perms => mog("2755", "$(user)", "$(user)"),
+      handle => "create_$(home)";
+}
