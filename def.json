@@ -1,0 +1,12 @@
+{
+    "classes":
+    {
+    "services_autorun" : [ "any" ],
+    },
+
+    #"inputs": [ "$(sys.libdir)/bundles.cf" ],
+    "vars": {
+        "acl": [ ".*$(def.domain)", "$(sys.policy_hub)/16" ],
+        "domain": "teamgehrke.com",
+    }
+}
