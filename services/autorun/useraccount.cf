@@ -1,21 +1,33 @@
-bundle agent hello_world_autorun
+bundle agent useraccount
 {
   meta:
       "tags" slist => { "autorun" };
 
   vars:
-      "users" slist => { "martin" };
+      "users" data => parsejson('
+                       [ { "username" : "martin",
+                        "uid" : "2001",
+                        "desc" : "Martin Gehrke",
+                        "shell" : "/bin/bash",
+                       }]');
+
+  classes:
+    "_$(users[username])_group_exists" expression => groupexists("$(users[username])");
 
   users:
-      "$(users)"
+      "$(users[username])"
         policy => "present",
-        uid => "2001",
-        description => "Martin Gehrke",
-        home_dir => "/home/$(users)",
-        group_primary => "2001",
-        shell => "/bin/bash",
-        home_bundle => create_homedir("/home/$(users)", "$(users)"),
-        ifvarclass => "$(users)_group_exists";
+        uid => "$(users[uid])",
+        description => "$(users[desc])",
+        home_dir => "/home/$(users[username])",
+        group_primary => "$(users[uid]);",
+        shell => "$(users[shell])",
+        home_bundle => create_homedir("/home/$(users[username])", "$(users[username])"),
+        if => "_$(users[username])_group_exists";
+
+  methods:
+    "add_group_$(users[username])" usebundle => add_group("$(users[username])", "$(users[uid])"),
+        if => not("_$(users[username])_group_exists");
 }
 
 bundle agent create_homedir(home, user)
@@ -26,3 +38,10 @@ bundle agent create_homedir(home, user)
       perms => mog("2755", "$(user)", "$(user)"),
       handle => "create_$(home)";
 }
+
+bundle agent add_group(gname, gid)
+{
+  commands:
+    "/usr/sbin/groupadd -g $(gid) $(gname)"
+}
+
