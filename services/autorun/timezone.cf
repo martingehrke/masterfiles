@@ -13,5 +13,11 @@ bundle agent useraccount
     "timezone_exists" expression => fileexists("$(zonedir)/$(timezone)");
 
   files:
+    "$(timezone_file)"
+        perms => mog("644", "root", "root"),
+        comment => "set timezone",
+        create => "true",
+        edit_line => insert_lines("$(timezone)"),
+        edit_defaults => empty;
     
 }
