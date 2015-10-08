@@ -1,0 +1,17 @@
+bundle agent useraccount
+{
+  meta:
+      "tags" slist => { "autorun" };
+
+  vars:
+    "timezone_file" string => "/etc/timezone";
+    "localtime_file" string => "/etc/localtime";
+    "zonedir" string => "/usr/share/zoneinfo";
+    "timezone" string => "America/New_York";
+
+  classes:
+    "timezone_exists" expression => fileexists("$(zonedir)/$(timezone)");
+
+  files:
+    
+}
