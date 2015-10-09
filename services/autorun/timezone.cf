@@ -19,5 +19,9 @@ bundle agent useraccount
         create => "true",
         edit_line => insert_lines("$(timezone)"),
         edit_defaults => empty;
+    "$(localtime_file)"
+        perms => mog("644", "root", "root"),
+        copy_from => local_dcp("$(zonedir)/$(timezone)"),
+        create => "true";
     
 }
